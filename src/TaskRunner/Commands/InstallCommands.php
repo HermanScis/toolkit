@@ -38,6 +38,7 @@ class InstallCommands extends AbstractCommands
      */
     public function installClean(array $options = [
         'config-file' => InputOption::VALUE_REQUIRED,
+        'site-profile' => InputOption::VALUE_REQUIRED,
     ])
     {
         $tasks = [];
@@ -46,6 +47,11 @@ class InstallCommands extends AbstractCommands
         $has_config = file_exists($options['config-file']);
         $params = $has_config ? ' --existing-config' : '';
 
+        # FIXME: this should be configurable somewhere via Drone?
+        $options['site-profile'] = 'social';
+        if ($options['site-profile']) {
+            $params.= " --site-profile " . $options['site-profile'];
+        }
         $runner_bin = $this->getConfig()->get('runner.bin_dir') . '/run';
         $tasks[] = $this->taskExecStack()
             ->stopOnFail()
